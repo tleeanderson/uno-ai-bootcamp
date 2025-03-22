@@ -1,9 +1,8 @@
 import streamlit as st
-import openai
+from openai import OpenAI
 
-def set_api_key():
-    with open('key.txt', 'r') as file:
-        openai.api_key = file.read().strip()
+with open('key.txt', 'r') as file:
+    client = OpenAI(api_key=file.read().strip())
 
 def streamlit_app():
     # Streamlit app
@@ -23,16 +22,13 @@ def streamlit_app():
 
     # AI-based code suggestions
     if st.button('Get AI Suggestions'):
-        response = openai.Completion.create(
-            engine='text-davinci-003',
-            prompt=f'Provide suggestions for the following Python code:\n\n{code_input}',
-            max_tokens=150
-        )
+        response = client.completions.create(model='davinci-002',
+        prompt=f'Provide suggestions for the following Python code:\n\n{code_input}',
+        max_tokens=150)
         suggestions = response.choices[0].text.strip()
         st.subheader('AI Suggestions')
         st.write(suggestions)
 
 
 if __name__ == '__main__':
-    set_api_key()
     streamlit_app()
